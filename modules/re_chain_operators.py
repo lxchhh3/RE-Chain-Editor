@@ -13,7 +13,7 @@ from .re_chain_propertyGroups import getChainHeader,getWindSettings,getChainSett
 from .ui_re_chain_panels import tag_redraw
 from .blender_utils import showErrorMessageBox,outlinerShowObject
 from .re_chain_presets import saveAsPreset,readPresetJSON
-from .re_chain_geoNodes import getColCapsuleGeoNodeTree,getColSphereGeoNodeTree,getChainLinkGeoNodeTree,getConeGeoNodeTree,getLinkColGeoNodeTree,getChainGroupMat
+from .re_chain_geoNodes import getColCapsuleGeoNodeTree,getColSphereGeoNodeTree,getChainLinkGeoNodeTree,getConeGeoNodeTree,getLinkColGeoNodeTree,getChainGroupMat,setGeoNodeInput
 
 
 class WM_OT_ChainFromBone(Operator):
@@ -389,12 +389,8 @@ class WM_OT_CollisionFromBones(Operator):
 					#modifier["Start Object"] = startObj.name
 					#modifier["End Object"] = endObj.name
 					#Can't access group inputs by name, have to use blender's auto generated names because ???
-					if bpy.app.version < (4,0,0):
-						modifier["Input_0"] = colCapsuleStartObj
-						modifier["Input_1"] = colCapsuleEndObj
-					else:
-						modifier["Socket_0"] = colCapsuleStartObj
-						modifier["Socket_1"] = colCapsuleEndObj
+					setGeoNodeInput(modifier,0,colCapsuleStartObj)
+					setGeoNodeInput(modifier,1,colCapsuleEndObj)
 				alignCollisions()
 				self.report({"INFO"},"Created collision from bone.")
 		else:
@@ -729,17 +725,10 @@ class WM_OT_CreateChainLinkCollision(Operator):
 							bpy.data.node_groups.remove(modifier.node_group)
 						modifier.node_group = nodeGroup
 						
-						if bpy.app.version < (4,0,0):
-							if objA != None:
-								modifier["Input_0"] = objA
-							if objB != None:
-								modifier["Input_1"] = objB
-							
-						else:
-							if objA != None:
-								modifier["Socket_0"] = objA
-							if objB != None:
-								modifier["Socket_1"] = objB
+						if objA != None:
+							setGeoNodeInput(modifier,0,objA)
+						if objB != None:
+							setGeoNodeInput(modifier,1,objB)
 						modifier.node_group.interface_update(bpy.context)
 						if isChain2:
 							linkCollision = Chain2LinkNode()

@@ -780,3 +780,15 @@ def getConeGeoNodeTree(isSubGroup = False):
 	else:
 		node_group = bpy.data.node_groups[TREENAME]
 	return node_group
+
+def setGeoNodeInput(modifier,index,value):
+	#Geometry Nodes modifier inputs are addressed by Blender's auto generated identifiers.
+	#Blender 5.0 removed ID property access on modifiers (modifier["Socket_0"] raises),
+	#so inputs are set through modifier.properties.inputs.Socket_0.value there.
+	properties = getattr(modifier,"properties",None)
+	if properties != None and hasattr(properties,"inputs"):
+		getattr(properties.inputs,f"Socket_{index}").value = value
+	elif bpy.app.version < (4,0,0):
+		modifier[f"Input_{index}"] = value
+	else:
+		modifier[f"Socket_{index}"] = value

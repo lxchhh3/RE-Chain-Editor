@@ -29,7 +29,7 @@ from .re_chain_propertyGroups import (getChainHeader,
 									  getChainLinkCollisionNode,
 									  setChainLinkCollisionNodeData)
 
-from .re_chain_geoNodes import getColCapsuleGeoNodeTree,getColSphereGeoNodeTree,getChainLinkGeoNodeTree,getConeGeoNodeTree,getLinkColGeoNodeTree,getChainGroupMat
+from .re_chain_geoNodes import getColCapsuleGeoNodeTree,getColSphereGeoNodeTree,getChainLinkGeoNodeTree,getConeGeoNodeTree,getLinkColGeoNodeTree,getChainGroupMat,setGeoNodeInput
 
 from .file_re_chain import ChainFile, ChainHeaderData, ChainSettingsData, ChainCollisionData, ChainNodeData, ChainGroupData, ChainJiggleData, WindSettingsData,ChainLinkData,ChainLinkNode,ChainSubGroupData
 from .file_re_chain2 import Chain2File, Chain2HeaderData, Chain2SettingsData, Chain2CollisionData, Chain2NodeData, Chain2GroupData, Chain2JiggleData, Chain2WindSettingsData,Chain2LinkData,Chain2LinkNode,Chain2SubGroupData
@@ -928,12 +928,8 @@ def importChainFile(filepath,options,isChain2 = False):
 				#modifier["Start Object"] = startObj.name
 				#modifier["End Object"] = endObj.name
 				#Can't access group inputs by name, have to use blender's auto generated names because ???
-				if bpy.app.version < (4,0,0):
-					modifier["Input_0"] = colCapsuleStartObj
-					modifier["Input_1"] = colCapsuleEndObj
-				else:
-					modifier["Socket_0"] = colCapsuleStartObj
-					modifier["Socket_1"] = colCapsuleEndObj
+				setGeoNodeInput(modifier,0,colCapsuleStartObj)
+				setGeoNodeInput(modifier,1,colCapsuleEndObj)
 		alignCollisions()
 	#CHAIN LINK IMPORT
 	#print(terminalNameHashDict)#debug
@@ -1044,17 +1040,10 @@ def importChainFile(filepath,options,isChain2 = False):
 					bpy.data.node_groups.remove(modifier.node_group)
 				modifier.node_group = nodeGroup
 				
-				if bpy.app.version < (4,0,0):
-					if objA != None:
-						modifier["Input_0"] = objA
-					if objB != None:
-						modifier["Input_1"] = objB
-					
-				else:
-					if objA != None:
-						modifier["Socket_0"] = objA
-					if objB != None:
-						modifier["Socket_1"] = objB
+				if objA != None:
+					setGeoNodeInput(modifier,0,objA)
+				if objB != None:
+					setGeoNodeInput(modifier,1,objB)
 				modifier.node_group.interface_update(bpy.context)
 				linkCollisionObj.re_chain_chainlink_collision.collisionRadius = linkCollision.collisionRadius
 				linkCollisionObj.re_chain_chainlink_collision.collisionFilterFlags = linkCollision.collisionFilterFlags

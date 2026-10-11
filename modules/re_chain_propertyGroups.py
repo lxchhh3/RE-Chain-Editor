@@ -1,5 +1,6 @@
 #Author: NSA Cloud
 import bpy
+from .re_chain_geoNodes import setGeoNodeInput
 from bpy.props import (StringProperty,
 					   BoolProperty,
 					   IntProperty,
@@ -144,10 +145,7 @@ def update_AngleLimitRad(self, context):
 							
 							if "REChainGeometryNodes" in frameChild.modifiers:
 								modifier = frameChild.modifiers["REChainGeometryNodes"]
-								if bpy.app.version < (4,0,0):
-									modifier["Input_0"] = obj.re_chain_chainnode.angleLimitRad
-								else:
-									modifier["Socket_0"] = obj.re_chain_chainnode.angleLimitRad
+								setGeoNodeInput(modifier,0,obj.re_chain_chainnode.angleLimitRad)
 								modifier.node_group.interface_update(context)
 								#print("Set modifier value")
 							#frameChild.data.spot_size = obj.re_chain_chainnode.angleLimitRad
@@ -279,10 +277,7 @@ def update_ChainGroupA(self, context):
 						break
 				if nodeObj != None:
 					if "REChainGeometryNodes" in obj.modifiers:
-						if bpy.app.version < (4,0,0):
-							obj.modifiers["REChainGeometryNodes"]["Input_0"] = nodeObj
-						else:
-							obj.modifiers["REChainGeometryNodes"]["Socket_0"] = nodeObj
+						setGeoNodeInput(obj.modifiers["REChainGeometryNodes"],0,nodeObj)
 						obj.modifiers["REChainGeometryNodes"].node_group.interface_update(context)
 			obj.name = f"LINK_{str(linkIndex).zfill(2)} - {shortNameA} > {shortNameB}"
 def update_ChainGroupB(self, context):
@@ -307,10 +302,7 @@ def update_ChainGroupB(self, context):
 						break
 				if nodeObj != None:
 					if "REChainGeometryNodes" in obj.modifiers:
-						if bpy.app.version < (4,0,0):
-							obj.modifiers["REChainGeometryNodes"]["Input_1"] = nodeObj
-						else:
-							obj.modifiers["REChainGeometryNodes"]["Socket_1"] = nodeObj
+						setGeoNodeInput(obj.modifiers["REChainGeometryNodes"],1,nodeObj)
 						obj.modifiers["REChainGeometryNodes"].node_group.interface_update(context)
 			if obj.re_chain_chainlink.chainGroupAObject in bpy.data.objects and bpy.data.objects[obj.re_chain_chainlink.chainGroupAObject].get("TYPE") == "RE_CHAIN_CHAINGROUP":
 				groupAObj = bpy.data.objects[obj.re_chain_chainlink.chainGroupAObject]
@@ -323,10 +315,7 @@ def update_ChainLinkCollisionRadius(self, context):
 	if type(obj).__name__ == "Object":#Check if it's an object to prevent issues with clipboard 
 		if obj.get("TYPE",None) == "RE_CHAIN_LINK_COLLISION":
 			if "REChainGeometryNodes" in obj.modifiers:
-				if bpy.app.version < (4,0,0):
-					obj.modifiers["REChainGeometryNodes"]["Input_2"] = obj.re_chain_chainlink_collision.collisionRadius
-				else:
-					obj.modifiers["REChainGeometryNodes"]["Socket_2"] = obj.re_chain_chainlink_collision.collisionRadius
+				setGeoNodeInput(obj.modifiers["REChainGeometryNodes"],2,obj.re_chain_chainlink_collision.collisionRadius)
 				obj.modifiers["REChainGeometryNodes"].node_group.interface_update(context)
 
 def update_hideLastNodeAngleLimit(self, context):
